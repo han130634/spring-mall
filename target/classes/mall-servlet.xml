@@ -1,0 +1,122 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<context:component-scan base-package="com.netease.course.controller" />
+	<!-- 拦截器 -->
+	<!-- <mvc:interceptors> <bean class="com.netease.course.inteceptor.MyInteceptor" /> </mvc:interceptors> -->
+	<!-- 对静态资源文件的访问 方案一 （二选一） -->
+	<!-- <mvc:default-servlet-handler /> -->
+	
+	<!-- 对静态资源文件的访问 方案二 （二选一） -->
+	<mvc:resources mapping="/images/**" location="/images/" />
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/scripts/**" location="/scripts/" />
+	
+	<mvc:interceptors>
+		<!-- 连式多个顺序执行由于排除的方式不好过滤故修改为指定位置过滤状态 -->
+		<mvc:interceptor>
+	        <mvc:mapping path="/api/*"/>
+	        <mvc:exclude-mapping path="/api/login" />
+	        <bean class="com.netease.course.interceptor.ApiInterceptor"/>  
+	    </mvc:interceptor>
+		<mvc:interceptor>
+	        <mvc:mapping path="/account"/>
+	        <mvc:mapping path="/settleAccount"/>
+	        <bean class="com.netease.course.interceptor.BuyerInterceptor"/>  
+	    </mvc:interceptor>
+	    <mvc:interceptor>
+	        <mvc:mapping path="/public"/>
+	        <mvc:mapping path="/publicSubmit"/>
+	        <mvc:mapping path="/edit**"/>
+	        <mvc:mapping path="/editSubmit"/>  
+	        <bean class="com.netease.course.interceptor.SellerInterceptor"/>  
+	    </mvc:interceptor>
+        <!-- 检查用户权限，对于部分不需要权限的路径进行排除 -->
+        <!-- <mvc:interceptor>
+           		 先匹配所有路径，然后排除不需要检查的路径
+            <mvc:mapping path="/**" />
+           		 与登录相关的请求
+            <mvc:exclude-mapping path="/login" />
+           		 以下是静态资源
+            <mvc:exclude-mapping path="/images/**" />
+            <mvc:exclude-mapping path="/css/**" />
+            <mvc:exclude-mapping path="/scripts/**" />
+            <mvc:exclude-mapping path="/js/**" />
+            <mvc:exclude-mapping path="/show**" />
+           		 客户端文件上传下载，不使用该校验
+            <mvc:exclude-mapping path="/download/**" />
+            <mvc:exclude-mapping path="/upload/**" />
+            	用户是否已经登录的检查
+            <bean id="loginInterceptor" class="com.netease.course.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor> -->
+        
+    </mvc:interceptors>
+	
+	
+	<!-- 支持mvc注解驱动 -->
+    <mvc:annotation-driven enable-matrix-variables="true" />
+
+    <!-- 配置映射媒体类型的策略 -->
+    <bean
+        class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="removeSemicolonContent" value="false" />
+    </bean>
+	
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/template" />
+		<property name="defaultEncoding" value="UTF-8" /> 
+	</bean>
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="viewResolvers">
+			<list>
+				<bean id="viewResolver"
+					class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+					<property name="cache" value="true" />
+					<property name="prefix" value="" />
+					<property name="suffix" value=".ftl" />
+					<property name="contentType" value="text/html; charset=utf-8" />
+					<property name="exposeRequestAttributes" value="true" />
+				    <property name="exposeSessionAttributes" value="true" />
+				    <property name="exposeSpringMacroHelpers" value="true" />
+				    <property name="requestContextAttribute" value="request" />
+				</bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+			</list>
+		</property>
+	</bean>
+	<!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	
+    <!--文件上传解析器 -->
+    <!--Spring MVC默认不能识别multipart格式的文件内容 -->
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+    </bean>
+	
+</beans>
+<!-- <property name="defaultContentType" value="text/html" /> -->
+<!-- <property name="mediaTypes"> <map> 告诉视图解析器，返回的类型为json格式 <entry key="json" 
+	value="application/json" /> <entry key="html" value="text/html" /> </map> 
+	</property> -->
