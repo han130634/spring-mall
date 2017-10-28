@@ -24,7 +24,7 @@ public interface TrxDao {
 	public List<Trx> getTrxListByContentId(@Param(value = "contentId") Integer contentId);
 	
 	@Select({"<script>",
-	    "SELECT con.id,con.title,con.icon AS image,con.abstract AS summary,con.text AS detail,con.price,trx.price AS buyPrice,trx.number AS buyNum,trx.time AS buyTime FROM trx LEFT JOIN Content AS con ON trx.contentId =con.id ",
+	    "SELECT con.id,con.title,con.icon AS image,con.abstract AS summary,con.text AS detail,con.price,trx.price AS buyPrice,trx.number AS buyNum,trx.time AS buyTime FROM trx LEFT JOIN content AS con ON trx.contentId =con.id ",
 	    "WHERE 1=1 ",
 	    "<when test='personId!=null'>",
 	    "AND trx.personId =#{personId} ",
