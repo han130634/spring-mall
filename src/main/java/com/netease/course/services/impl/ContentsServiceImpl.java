@@ -140,7 +140,7 @@ public class ContentsServiceImpl implements ContentsService {
 		Product product = new Product();
 		Contents content = contentsDao.getContentsById(id);
 		//这里只处理了最近一次的购物记录价格&全部个数统计，未做每次的购物金额。
-		List<Product> trxProduct = trxDao.getProduct(id, personId);
+		List<Product> trxProduct = trxDao.getProduct(id, userType==1 ? null : personId);
 		product.setIsBuy(false);
 		product.setIsSell(false);
 		if (trxProduct.size() != 0) {
