@@ -73,9 +73,9 @@ public class ApiController {
 								.delete(url.length() - request.getRequestURI().length(), url.length())
 								.append(request.getServletContext().getContextPath()).toString();
 						// 更新数据
-						map.replace("code", 200);
-						map.replace("message", "成功");
-						map.replace("result", (tempContextUrl + "/images/" + filename).toString());
+						map.addAttribute("code", 200);
+						map.addAttribute("message", "成功");
+						map.addAttribute("result", (tempContextUrl + "/images/" + filename).toString());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -97,9 +97,9 @@ public class ApiController {
 		map.addAttribute("message", "异常");
 		map.addAttribute("result", false);
 		if (contentsService.getContentsById(id) != null && contentsService.delete(id) > 0) {
-			map.replace("code", 200);
-			map.replace("message", "成功");
-			map.replace("result", true);
+			map.addAttribute("code", 200);
+			map.addAttribute("message", "成功");
+			map.addAttribute("result", true);
 		}
 
 		return map;
