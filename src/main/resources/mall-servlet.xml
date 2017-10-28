@@ -20,6 +20,9 @@
 	<mvc:resources mapping="/css/**" location="/css/" />
 	<mvc:resources mapping="/scripts/**" location="/scripts/" />
 	
+	<!-- 支持mvc注解驱动 -->
+    <mvc:annotation-driven enable-matrix-variables="true" />
+	
 	<mvc:interceptors>
 		<!-- 连式多个顺序执行由于排除的方式不好过滤故修改为指定位置过滤状态 -->
 		<mvc:interceptor>
@@ -61,8 +64,6 @@
     </mvc:interceptors>
 	
 	
-	<!-- 支持mvc注解驱动 -->
-    <mvc:annotation-driven enable-matrix-variables="true" />
 
     <!-- 配置映射媒体类型的策略 -->
     <bean
